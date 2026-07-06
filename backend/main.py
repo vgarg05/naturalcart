@@ -14,6 +14,8 @@ else:
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from backend.vector_store import ProductVectorStore
@@ -220,3 +222,26 @@ async def generate_grocery_list(body: GroceryRequest):
             status_code=500,
             detail=f"RAG matching failed: {str(exc)}"
         )
+
+# ---------------------------------------------------------------------------
+# Static Frontend (Production / Hugging Face)
+# ---------------------------------------------------------------------------
+# Serve the built React app. This MUST come after all /api/* routes so it
+# does not intercept API calls.
+_dist = Path(__file__).parent.parent / "dist"
+if _dist.exists():
+    # Serve static assets (JS, CSS, images)
+    app.mount("/assets", StaticFiles(directory=str(_dist / "assets")), name="assets")
+
+    # Catch-all: return index.html for any non-API path (supports React Router)
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        index = _dist / "index.html"
+        if index.exists():
+            return FileResponse(str(index))
+        return {"detail": "Frontend not built. Run 'npm run build' first."}
+else:
+    log.warning(
+        "'dist/' folder not found. Run 'npm run build' to serve the frontend. "
+        "In development, Vite proxy handles this automatically."
+    )

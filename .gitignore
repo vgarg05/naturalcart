@@ -13,6 +13,7 @@ backend/cached_embeddings.npy
 node_modules/
 dist/
 .cache/
+*.local
 
 # IDE & OS
 .vscode/
