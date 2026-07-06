@@ -1752,3 +1752,19 @@ footer a:hover { text-decoration: underline; }
   }
 }
 
+.cart-action-btn.out-of-stock-disabled {
+  background: rgba(239, 68, 68, 0.05) !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+  color: #FCA5A5 !important;
+  cursor: not-allowed !important;
+  opacity: 0.65;
+}
+
+.cart-action-btn.out-of-stock-disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+  color: #FCA5A5 !important;
+}
+
+

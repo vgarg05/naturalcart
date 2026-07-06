@@ -133,7 +133,20 @@ export default function App() {
   }, []);
 
   const updateProductInCart = (idx, product, quantity) => {
-    setCart((prev) => prev.map((c) => c.itemIdx === idx ? { ...c, product, quantity } : c));
+    if (!product.available) {
+      setCart((prev) => prev.filter((c) => c.itemIdx !== idx));
+      setCheckedItems((prev) => {
+        const n = new Set(prev);
+        n.delete(idx);
+        return n;
+      });
+      showToast({
+        title: '⚠ Product Out of Stock',
+        message: `${product.name} is out of stock and was removed from your cart.`,
+      });
+    } else {
+      setCart((prev) => prev.map((c) => c.itemIdx === idx ? { ...c, product, quantity } : c));
+    }
   };
 
   // ── SWAP ──────────────────────────────────────────────────────────────────
@@ -187,10 +200,18 @@ export default function App() {
       return;
     }
 
+    const prod = am.product;
+    if (prod && !prod.available) {
+      showToast({
+        title: '⚠ Product Out of Stock',
+        message: 'This product is currently out of stock and cannot be added to your shopping cart.',
+      });
+      return;
+    }
+
     const nc = new Set(checkedItems);
     nc.has(idx) ? nc.delete(idx) : nc.add(idx);
     setCheckedItems(nc);
-    const prod = am.product;
     const dq = scaleQty(item.qty_per_person, servings);
     toggleCartItem(idx, prod, calculatePacksRequired(dq, prod.quantity));
   };
@@ -476,7 +497,8 @@ export default function App() {
                               )}
 
                               <button
-                                className={`cart-action-btn ${isInCart ? 'added' : ''}`}
+                                className={`cart-action-btn ${isInCart ? 'added' : ''} ${!activeProduct.available ? 'out-of-stock-disabled' : ''}`}
+                                disabled={!activeProduct.available}
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   toggleCartItem(idx, activeProduct, packsRequired);
@@ -487,7 +509,7 @@ export default function App() {
                                   });
                                 }}
                               >
-                                {isInCart ? '✓ Added' : '+ Add to Cart'}
+                                {!activeProduct.available ? 'Out of Stock' : isInCart ? '✓ Added' : '+ Add to Cart'}
                               </button>
                             </div>
                           ) : (
