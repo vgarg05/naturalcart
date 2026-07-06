@@ -28,7 +28,7 @@ def main():
     embeddings = get_embeddings(texts)
     vs.build_index(embeddings)
 
-    print(f"==> Embeddings generated. Shape: {embeddings.shape}")
+    print(f"==> Embeddings generated. Count: {len(embeddings)}")
     print(f"==> Cache saved to: {CACHE_PATH}")
     print("==> Done. Server will load this cache on startup.")
 
