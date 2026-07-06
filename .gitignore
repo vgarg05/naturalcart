@@ -1,0 +1,23 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+.pytest_cache/
+
+# NaturalCart specific
+backend/cached_embeddings.npy
+
+# Node
+node_modules/
+dist/
+.cache/
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
