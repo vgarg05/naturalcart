@@ -156,8 +156,8 @@ def ensure_index_initialized(api_key: Optional[str] = None):
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
-@app.get("/", tags=["Health"])
-async def root():
+@app.get("/api/health", tags=["Health"])
+async def health():
     return {"status": "ok", "message": "NaturalCart RAG API is running."}
 
 
